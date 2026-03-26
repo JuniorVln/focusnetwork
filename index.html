@@ -216,9 +216,6 @@ body {
   <!-- 1. HERO SECTION -->
   <section class="min-h-screen flex overflow-hidden z-10 pt-24 pb-12 relative items-center">
 
-    <!-- Iridescence / Aurora canvas effect -->
-    <canvas id="aurora-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></canvas>
-
     <!-- Animated grid background -->
     <div class="absolute bottom-0 left-0 w-full h-[65vh] flex justify-center items-end overflow-hidden z-0 pointer-events-none">
       <canvas id="grid-canvas" class="absolute bottom-0 left-0 w-full h-full"></canvas>
@@ -1001,100 +998,6 @@ body {
     }
   </script>
 
-  <!-- Aurora / Iridescence canvas — recreates the Aura platform effect -->
-  <script>
-  (function () {
-    const canvas = document.getElementById('aurora-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let W, H, T = 0;
-
-    function resize() {
-      const hero = canvas.parentElement;
-      W = canvas.width  = hero ? hero.offsetWidth  : window.innerWidth;
-      H = canvas.height = hero ? hero.offsetHeight : window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    /* ── Ray definitions ─────────────────────────────────────────────────
-       Each ray is a wide, softly-blurred light beam angled diagonally.
-       Parameters mirror the visual in the screenshot:
-         cx / cy  : fractional centre position
-         rx / ry  : fractional half-width / half-height of the beam
-         rot      : rotation in radians (negative = tilts upper-right)
-         h/s/l    : HSL colour
-         a        : peak alpha
-         spd      : animation speed per axis
-         amp      : animation amplitude per axis
-         phi      : phase offset
-    ──────────────────────────────────────────────────────────────────── */
-    const rays = [
-      /* main wide teal sweep */
-      { cx:.60, cy:.32, rx:.72, ry:1.8, rot:-0.54, h:192, s:100, l:42, a:.28, spd:[.00040,.00030], amp:[.07,.04], phi:[0.0, 0.9] },
-      /* secondary cyan streak */
-      { cx:.75, cy:.22, rx:.48, ry:1.4, rot:-0.48, h:178, s: 90, l:48, a:.22, spd:[.00028,.00020], amp:[.05,.03], phi:[2.1, 1.6] },
-      /* deep blue body */
-      { cx:.52, cy:.55, rx:.65, ry:1.2, rot:-0.38, h:210, s: 85, l:30, a:.30, spd:[.00022,.00016], amp:[.08,.05], phi:[4.2, 3.1] },
-      /* bright highlight streak */
-      { cx:.45, cy:.18, rx:.28, ry:1.0, rot:-0.62, h:186, s: 95, l:55, a:.18, spd:[.00050,.00038], amp:[.06,.03], phi:[1.1, 2.9] },
-      /* wide soft green-teal wash */
-      { cx:.68, cy:.40, rx:.55, ry:1.6, rot:-0.44, h:168, s: 80, l:36, a:.20, spd:[.00032,.00024], amp:[.06,.04], phi:[3.5, 0.5] },
-    ];
-
-    function drawRay(r) {
-      const cx  = (r.cx + Math.sin(T * r.spd[0] + r.phi[0]) * r.amp[0]) * W;
-      const cy  = (r.cy + Math.cos(T * r.spd[1] + r.phi[1]) * r.amp[1]) * H;
-      const rw  = r.rx * W;
-      const rh  = r.ry * H;
-      const pulse = 1 + Math.sin(T * 0.00028 + r.phi[0]) * 0.10;
-      const alpha = r.a * pulse;
-
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(r.rot);
-
-      /* horizontal gradient across the beam width */
-      const g = ctx.createLinearGradient(-rw, 0, rw, 0);
-      g.addColorStop(0.00, `hsla(${r.h},${r.s}%,${r.l}%,0)`);
-      g.addColorStop(0.30, `hsla(${r.h},${r.s}%,${r.l+8}%,${(alpha*.45).toFixed(3)})`);
-      g.addColorStop(0.50, `hsla(${r.h},${r.s}%,${r.l+18}%,${alpha.toFixed(3)})`);
-      g.addColorStop(0.70, `hsla(${r.h},${r.s}%,${r.l+8}%,${(alpha*.45).toFixed(3)})`);
-      g.addColorStop(1.00, `hsla(${r.h},${r.s}%,${r.l}%,0)`);
-
-      ctx.fillStyle = g;
-      ctx.fillRect(-rw, -rh / 2, rw * 2, rh);
-      ctx.restore();
-    }
-
-    /* Soft radial vignette for depth */
-    function drawVignette() {
-      const g = ctx.createRadialGradient(W*.62, H*.38, 0, W*.62, H*.38, W*.75);
-      g.addColorStop(0,   'rgba(0,180,216,0.04)');
-      g.addColorStop(0.5, 'rgba(0,119,182,0.02)');
-      g.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-    }
-
-    function frame() {
-      ctx.clearRect(0, 0, W, H);
-
-      /* additive blend so beams "add up" like real light */
-      ctx.globalCompositeOperation = 'lighter';
-      rays.forEach(drawRay);
-
-      /* soft centred radial on top */
-      ctx.globalCompositeOperation = 'source-over';
-      drawVignette();
-
-      T++;
-      requestAnimationFrame(frame);
-    }
-
-    frame();
-  })();
-  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
