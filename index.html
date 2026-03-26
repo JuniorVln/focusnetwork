@@ -213,6 +213,13 @@ body {
     }
   </script>
 
+  <!-- UnicornStudio atmospheric background -->
+  <div class="fixed top-0 left-0 w-full h-screen -z-20 brightness-50 pointer-events-none" style="mask-image:linear-gradient(to bottom,transparent,black 0%,black 80%,transparent);-webkit-mask-image:linear-gradient(to bottom,transparent,black 0%,black 80%,transparent);">
+    <div class="absolute inset-0 h-full w-full">
+      <div data-us-project="vi5SxDwDvEJMwkyTdyH8" class="absolute left-0 top-0 h-full w-full"></div>
+    </div>
+  </div>
+
   <!-- 1. HERO SECTION -->
   <section class="min-h-screen flex overflow-hidden z-10 pt-24 pb-12 relative items-center">
 
@@ -1118,6 +1125,11 @@ body {
         if (fLegal) fTl.from(fLegal, { y: 12, opacity: 0, duration: 0.8, ease: 'power3.out' }, 0.6);
       }
     });
+  </script>
+
+  <!-- UnicornStudio loader -->
+  <script>
+    !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:false};var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js';s.onload=function(){if(!window.UnicornStudio.isInitialized){UnicornStudio.init();window.UnicornStudio.isInitialized=true;}};(document.head||document.body).appendChild(s);}}();
   </script>
 </body>
 </html>
